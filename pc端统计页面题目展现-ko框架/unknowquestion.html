@@ -2,11 +2,14 @@
 <html lang="en" ng-app>
 <head>
 	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge,chrome=1" />
 	<title>pc端统计页面题目展现</title>
+	<script src="http://cdn.bootcss.com/jquery/1.11.0/jquery.min.js"></script>
 	<script src="http://cdn.bootcss.com/knockout/3.2.0/knockout-min.js"></script>
 
 	<style>
 		*{padding: 0;margin: 0;}
+		body,html{background-color:#fff;}
 		.mt10{margin-top: 10px;}
 		.ml20{margin-left: 20px;}
 		.clearfix {zoom: 1;}
@@ -52,12 +55,14 @@
 
 	<!--解题视频模板-->
 	<script type="text/html" id="video-template">
+		<!--ko if:video_unique-->
 		<div class="qdItem">
 			<div class="qdiHead">视频讲解</div>
 			<div class="qdiBody mt10 clearfix">
 				<div class="qdiVideo" data-bind="event: { click: viewModel.openPlayer.bind($data, video_unique) }"><i></i><img data-bind="attr:{src:cover_url || 'images/pic.png'}" alt=""></div>
 			</div>
 		</div>
+		<!--/ko-->
 	</script>
 	<!--选择题模板-->
 	<script id="question-choice-template" type="text/html">
@@ -74,6 +79,7 @@
 				<div class="qdiBody" data-bind="html:solving_idea || '无'"></div>
 			</div>
 			<!--/ko-->
+			
 			<!--ko foreach:explain_videos-->
 				<!-- ko template:{ name:'video-template'} -->
 				<!-- /ko -->
@@ -96,8 +102,7 @@
 				<div class="qdiBody">
 				<!--ko foreach:points-->
 					<p>
-						<span data-bind="text:($index()+1)+'、'"></span>
-						<span data-bind="html:name"></span>
+						<span data-bind="html:$data"></span>
 					</p>
 				<!--/ko-->
 				</div>
@@ -119,12 +124,14 @@
 				<div class="qdiHead">解析</div>
 				<div class="qdiBody" data-bind="html:solving_idea || '无'"></div>
 			</div>
+			<!--/ko-->
 
 			<!--ko foreach:$data.explain_videos-->
 				<!-- ko template:{ name:'video-template'} -->
 				<!-- /ko -->
 			<!--/ko-->
 
+			<!--ko with:ref_info-->
 			<div class="qdItem">
 				<div class="qdiHead">答案</div>
 				<div class="qdiBody">
@@ -141,8 +148,7 @@
 				<div class="qdiBody">
 				<!--ko foreach:points-->
 					<p>
-						<span data-bind="text:($index()+1)+'、'"></span>
-						<span data-bind="html:name"></span>
+						<span data-bind="html:$data"></span>
 					</p>
 				<!--/ko-->
 				</div>
@@ -168,7 +174,7 @@
 			<!--ko foreach:children-->
 				<div class="qdItem" style="position:relative;">
 					<div class="qdiHead" data-bind="text:optionValue2[$index()]" style="font-size:20px;position:absolute;left:20px;">解析</div>
-					<div class="clearfix" style="margin-left:20px;border: 1px solid #ebebeb;box-shadow: 2px 2px 4px #ddd;">
+					<div class="clearfix" style="margin-left:20px;border: 1px solid #ebebeb;box-shadow: 1px 1px 2px #eee;">
 						<!-- ko template:{ name:'question-template',data:$data} -->
 						<!-- /ko -->
 					</div>
@@ -190,12 +196,14 @@
 				<div class="qdiHead">解析</div>
 				<div class="qdiBody" data-bind="html:solving_idea || '无'"></div>
 			</div>
+			<!--/ko-->
 
 			<!--ko foreach:$data.explain_videos-->
 				<!-- ko template:{ name:'video-template'} -->
 				<!-- /ko -->
 			<!--/ko-->
 
+			<!--ko with:ref_info-->
 			<div class="qdItem">
 				<div class="qdiHead">答案</div>
 				<div class="qdiBody">
@@ -212,8 +220,7 @@
 				<div class="qdiBody">
 				<!--ko foreach:points-->
 					<p>
-						<span data-bind="text:($index()+1)+'、'"></span>
-						<span data-bind="html:name"></span>
+						<span data-bind="html:$data"></span>
 					</p>
 				<!--/ko-->
 				</div>
@@ -226,6 +233,49 @@
 		<!--ko with:question-->
 			<div class="qdItem qdTitle">
 				<div data-bind="html:stem"></div>
+			</div>
+
+			<!--ko with:ref_info-->
+			<div class="qdItem">
+				<div class="qdiHead">解析</div>
+				<div class="qdiBody" data-bind="html:solving_idea || '无'"></div>
+			</div>
+			<!--/ko-->
+
+			<!--ko foreach:$data.explain_videos-->
+				<!-- ko template:{ name:'video-template'} -->
+				<!-- /ko -->
+			<!--/ko-->
+
+			<!--ko with:ref_info-->
+			<div class="qdItem">
+				<div class="qdiHead">答案</div>
+				<div class="qdiBody">
+				<!--ko foreach:answers-->
+				<p>
+					<span data-bind="html:$data || '无'"></span>
+				</p>
+				<!--/ko-->
+				</div>
+			</div>
+			<div class="qdItem">
+				<div class="qdiHead">考点</div>
+				<div class="qdiBody">
+				<!--ko foreach:points-->
+					<p>
+						<span data-bind="html:$data"></span>
+					</p>
+				<!--/ko-->
+				</div>
+			</div>
+			<!--/ko-->
+		<!--/ko-->
+	</script>
+	<!--判断题模板-->
+	<script id="question-checking-template" type="text/html">
+		<!--ko with:question-->
+			<div class="qdItem qdTitle">
+				<div data-bind="html:stem"></div>
 				<lebal><input class="vAlingM" type="radio" disabled /></lebal> <span>正确</span>
 				<lebal class="ml20"><input class="vAlingM" type="radio" disabled /></lebal> <span>错误</span>
 			</div>
@@ -234,12 +284,14 @@
 				<div class="qdiHead">解析</div>
 				<div class="qdiBody" data-bind="html:solving_idea || '无'"></div>
 			</div>
+			<!--/ko-->
 
 			<!--ko foreach:$data.explain_videos-->
 				<!-- ko template:{ name:'video-template'} -->
 				<!-- /ko -->
 			<!--/ko-->
 
+			<!--ko with:ref_info-->
 			<div class="qdItem">
 				<div class="qdiHead">答案</div>
 				<div class="qdiBody">
@@ -255,8 +307,7 @@
 				<div class="qdiBody">
 				<!--ko foreach:points-->
 					<p>
-						<span data-bind="text:($index()+1)+'、'"></span>
-						<span data-bind="html:name"></span>
+						<span data-bind="html:$data"></span>
 					</p>
 				<!--/ko-->
 				</div>
@@ -279,14 +330,16 @@
 	    <div data-bind='component: { name: "question-cloze",params:{ question:$data } } '></div>
 	    <!-- /ko -->
 	    <!-- 简答题/题型7 -->
-	    <!--ko if: $data.qtype==6 || $data.qtype==7|| $data.qtype==8 -->
+	    <!--ko if: $data.qtype==6 || $data.qtype==7 -->
 	    <div data-bind='component: { name: "question-shortanswer",params:{ question:$data } } '></div>
+	    <!-- /ko -->
+	    <!-- 判断题/题型8 -->
+	    <!--ko if:$data.qtype==8 -->
+	    <div data-bind='component: { name: "question-checking",params:{ question:$data } } '></div>
 	    <!-- /ko -->
 	</script>
 
 	<script>
-		// 是否开启调试模式
-		var debug = true;
 		// 字母选项
 		var optionValue=['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
 		// 圆圈数字选项
@@ -305,15 +358,13 @@
 		}
 		// 页面加载完成执行函数
 		window.onload=function(){
+		    // window.external.webLoadCompleted();
+			console&&console.log&&console.log('页面加载完成，开始请求数据')
+
 			// 启动ko
 			ko.applyBindings(viewModel);
-			if(debug){
-				// 测试接口数据
-				getJson('609631243413090360','');
-			}else{
-				// 后端C++特殊接口：获取数据
-				window.external.webLoadCompleted();
-			}
+			// 获取数据
+			getJson('950460940485655016','0');
 		}
 		
 		// 注册 选择题 组件
@@ -332,11 +383,15 @@
 		ko.components.register('question-shortanswer', {
 		    template: { element: 'question-shortanswer-template' }
 		});
+		// 注册 判断题 组件
+		ko.components.register('question-checking', {
+		    template: { element: 'question-checking-template' }
+		});
 
 		// 获取数据接口
 		function getJson(){
-			json = arguments;
-			if(!json[0] ){	// json[0]:题目ID,json[1]:视频ID,json[2]:tokenId
+			var json = arguments;
+			if(!json[0] || !json[1]){	// json[0]:题目ID,json[1]:视频ID,json[2]:tokenId
 				alert('题目获取失败')
 				return;
 			}
@@ -357,10 +412,11 @@
 				json[1] = '5623658280358666577';
 			}
 			var url = "http://121.14.117.225:8069/question/GetVideoQuestionByVersions?question_ver="+vid+"&video_ver="+json[1];
+			var url = "http://121.14.117.225:8069/question/GetVideoQuestionByVersions?question_ver=950460940485659081&video_ver=4779959573437966314";
 			getAjax(url,function(json){
-				var json = JSON.parse(json) || json;
+				json = $.parseJSON(json)
 				if(json.errcode){
-					alert(json.msg || '服务请求出错了~')
+					alert(json.msg? '服务请求错误：' +json.msg : '服务请求出错了~')
 					return;
 				}
 				// 解析数据
