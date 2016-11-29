@@ -802,7 +802,7 @@
 							var questionInfo = $('.swiper-slide.swiper-slide-active').find('.banner').attr('data-child')
 							typeof questionInfo !='object' && (questionInfo = JSON.parse(questionInfo))
 							// console.log(questionInfo)
-							var videoVersion = questionInfo.explain_videos && questionInfo.explain_videos[0] && questionInfo.explain_videos[0].videoVersion ? questionInfo.explain_videos[0].videoVersion : 0;
+							var videoVersion = questionInfo.explain_videos && questionInfo.explain_videos[0] && questionInfo.explain_videos[0].video_ver ? questionInfo.explain_videos[0].video_ver : 0;
 							var iWont = JSON.parse( sessionStorage.getItem('iWont') );
 							var userIdBase64 = 'Basic ' + window.btoa(iWont.userId+":");
 	        				var iWontObject = $('.swiper-slide.swiper-slide-active').find('.i-wont')
